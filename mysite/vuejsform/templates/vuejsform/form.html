@@ -1,25 +1,119 @@
 {% extends 'vuejsform/main.html' %}
 {% block content %}
 <div id="form">
-    <p>[[ title ]]</p>
+    <header>
+        <h1>[[ title ]]</h1>
+    </header>
 
     <section>
-        <b-field label="Product name">
-            <b-input v-model="form.name"></b-input>
-        </b-field>
+        <header>
+            <h2>Products</h2>
+        </header>
+        <table>
+            <tr>
+                <th v-for="(header, index) in headers" :key="index">[[ header ]]</th>
+            </tr>
+            <tr v-for="(product, index1) in products" :key="index1">
+                <td v-for="(item, index2) in products[index1]" :key="index2">[[ item ]]</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <header>
+            <h2>Form</h2>
+        </header>
+        <form method="post" @submit.prevent="addProduct()">
+            <b-field label="Product name" type="is-info">
+                <b-input v-model="form.name" type="text" required></b-input>
+            </b-field>
+
+            <b-field label="Code" type="is-info">
+                <b-input v-model="form.code" type="text" validation-message="Minimum of 10 characters" minlength="10" maxlength="10" required></b-input>
+            </b-field>
+
+            <b-field label="Factory" type="is-info">
+                <b-select v-model="form.factory" placeholder="Select a factory" required>
+                    <option
+                        v-for="(factory, index) in factories"
+                        :value="factory"
+                        :key="index">
+                        [[ factory ]]
+                    </option>
+                </b-select>
+            </b-field>
+
+            <b-field label="Origin" type="is-info">
+                <b-select v-model="form.origin" placeholder="Select an origin" required>
+                    <option
+                        v-for="(country, index) in countries"
+                        :value="country"
+                        :key="index">
+                        [[ country ]]
+                    </option>
+                </b-select>
+            </b-field>
+
+            <button class="button is-medium is-info" type="submit">Add</button>
+        </form>
     </section>
 </div>
+
+<style>
+section {
+    padding:25px;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 5px;
+}
+</style>
 
 <script>
 new Vue({
   delimiters: ['[[', ']]'],
   el: '#form',
   data: {
+    countries: ['United Kingdom', 'United States', 'China'],
     form: {
         name: '',
+        code: '',
+        factory: '',
+        origin: ''
     },
-    title: 'Welcome to our VueJS form',
+    factories: ['Big factory', 'Small factory', 'MASSIVE factory'],
+    headers: [],
+    products: {},
+    title: 'Welcome to our VueJS form'
+  },
+  created () {
+    this.getProducts()
+  },
+  methods: {
+    getProducts () {
+        this.$http
+            .get('/api/products/')
+            .then(_resp => {
+                this.products = _resp.body
+                this.headers = Object.keys(this.products[0])
+             })
+            .catch(_error => { console.error(_error) })
+    },
+    addProduct () {
+        this.$http
+            .post('/api/product/', this.form)
+            .then(_resp => { this.getProducts() })
+            .catch(_error => { console.error(_error) })
+    }
   }
+})
+
+Vue.http.interceptors.push(function (_request) {
+    if(_request.method === 'POST' || _request.method === 'PUT') {
+        const TOKEN = Cookies.get('csrftoken')
+        _request.headers.set('X-CSRFToken', TOKEN)
+    }
 })
 </script>
 {% endblock %}
