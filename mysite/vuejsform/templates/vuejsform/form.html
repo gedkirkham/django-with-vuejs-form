@@ -1,4 +1,25 @@
 {% extends 'vuejsform/main.html' %}
 {% block content %}
-<p>Form will go here</p>
+<div id="form">
+    <p>[[ title ]]</p>
+
+    <section>
+        <b-field label="Product name">
+            <b-input v-model="form.name"></b-input>
+        </b-field>
+    </section>
+</div>
+
+<script>
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#form',
+  data: {
+    form: {
+        name: '',
+    },
+    title: 'Welcome to our VueJS form',
+  }
+})
+</script>
 {% endblock %}
