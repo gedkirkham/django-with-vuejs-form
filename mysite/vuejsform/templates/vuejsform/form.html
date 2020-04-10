@@ -24,35 +24,39 @@
             <h2>Form</h2>
         </header>
         <form method="post" @submit.prevent="addProduct()">
-            <b-field label="Product name" type="is-info">
-                <b-input v-model="form.name" type="text" required></b-input>
-            </b-field>
+            <label>
+                Name:
+                <input v-model="form.name" type="text" required />
+            </label>
 
-            <b-field label="Code" type="is-info">
-                <b-input v-model="form.code" type="text" validation-message="Minimum of 10 characters" minlength="10" maxlength="10" required></b-input>
-            </b-field>
+            <label>
+                Code:
+                <input v-model="form.code" type="text" validation-message="Minimum of 10 characters" minlength="10" maxlength="10" required />
+            </label>
 
-            <b-field label="Factory" type="is-info">
-                <b-select v-model="form.factory" placeholder="Select a factory" required>
+            <label>
+                Factory:
+                <select v-model="form.factory" placeholder="Select a factory" required>
                     <option
-                        v-for="(factory, index) in factories"
-                        :value="factory"
-                        :key="index">
+                            v-for="(factory, index) in factories"
+                            :value="factory"
+                            :key="index">
                         [[ factory ]]
                     </option>
-                </b-select>
-            </b-field>
+                </select>
+            </label>
 
-            <b-field label="Origin" type="is-info">
-                <b-select v-model="form.origin" placeholder="Select an origin" required>
+            <label>
+                Origin:
+                <select v-model="form.origin" placeholder="Select an origin" required>
                     <option
-                        v-for="(country, index) in countries"
-                        :value="country"
-                        :key="index">
+                            v-for="(country, index) in countries"
+                            :value="country"
+                            :key="index">
                         [[ country ]]
                     </option>
-                </b-select>
-            </b-field>
+                </select>
+            </label>
 
             <button class="button is-medium is-info" type="submit">Add</button>
         </form>
